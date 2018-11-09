@@ -209,7 +209,7 @@ The `XRWebGLLayer`s framebuffer is created by the UA and behaves similarly to a 
 
 Once drawn to, the XR device will continue displaying the contents of the `XRWebGLLayer` framebuffer, potentially reprojected to match head motion, regardless of whether or not the page continues processing new frames. Potentially future spec iterations could enable additional types of layers, such as video layers, that could automatically be synchronized to the device's refresh rate.
 
-To get view matrices or the `poseMatrix` for each `XRFrame`, developers must call `getViewerPose()` and provide an `XRReferenceSpace` in which these matrices should be returned. Due to the nature of XR tracking systems, this function is not guaranteed to return a value and developers will need to respond appropriately.  For more information about what situations will cause `getViewerPose()` to fail and recommended practices for handling the situation, refer to the [Spatial Tracking Explainer](spatial-tracking-explainer.md).
+To get view matrices or the viewer's `transform` for each `XRFrame`, developers must call `getViewerPose()` and provide an `XRReferenceSpace` in which these matrices should be returned. Due to the nature of XR tracking systems, this function is not guaranteed to return a value and developers will need to respond appropriately.  For more information about what situations will cause `getViewerPose()` to fail and recommended practices for handling the situation, refer to the [Spatial Tracking Explainer](spatial-tracking-explainer.md).
 
 ```js
 function onDrawFrame(timestamp, xrFrame) {
@@ -240,7 +240,7 @@ function drawScene(view) {
   let viewMatrix = null;
   let projectionMatrix = null;
   if (view) {
-    viewMatrix = pose.viewMatrix;
+    viewMatrix = view.viewMatrix;
     projectionMatrix = view.projectionMatrix;
   } else {
     viewMatrix = defaultViewMatrix;
@@ -609,6 +609,15 @@ enum XREye {
   "right"
 };
 
+[SecureContext, Exposed=Window,
+ Constructor(optional DOMPointInit translation, optional DOMPointInit orientation)]
+interface XRRigidTransform {
+  readonly attribute DOMPointReadOnly translation;
+  readonly attribute DOMPointReadOnly orientation;
+
+  readonly attribute Float32Array matrix;
+};
+
 [SecureContext, Exposed=Window] interface XRView {
   readonly attribute XREye eye;
   readonly attribute Float32Array projectionMatrix;
@@ -616,7 +625,7 @@ enum XREye {
 };
 
 [SecureContext, Exposed=Window] interface XRViewerPose {
-  readonly attribute Float32Array poseMatrix;
+  readonly attribute XRRigidTransform transform;
   readonly attribute FrozenArray<XRView> views;
 };
 
