@@ -339,7 +339,7 @@ partial interface XRFrame {
 interface XRInputPose {
   readonly attribute boolean emulatedPosition;
   readonly attribute XRRay targetRay;
-  readonly attribute XRRigidTransform? grip;
+  readonly attribute XRRigidTransform? gripTransform;
 };
 
 //
